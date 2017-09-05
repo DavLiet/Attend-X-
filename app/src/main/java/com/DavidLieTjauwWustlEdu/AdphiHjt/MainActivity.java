@@ -14,6 +14,9 @@ import com.DavidLieTjauwWustlEdu.AdphiHjt.estimote.EstimoteCloudBeaconDetailsFac
 import com.DavidLieTjauwWustlEdu.AdphiHjt.estimote.ProximityContentManager;
 import com.estimote.coresdk.common.requirements.SystemRequirementsChecker;
 import com.estimote.coresdk.cloud.model.Color;
+import com.estimote.coresdk.recognition.packets.Beacon;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.w3c.dom.Text;
 
@@ -31,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final Map<Color, Integer> BACKGROUND_COLORS = new HashMap<>();
 
-
+    private DatabaseReference mDatabase;
 
 
     private static final int BACKGROUND_COLOR_NEUTRAL = android.graphics.Color.rgb(160, 169, 172);
@@ -42,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("Identification");
 
 
 
@@ -64,13 +69,15 @@ public class MainActivity extends AppCompatActivity {
                     submit.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            TextView txt = (TextView) findViewById(R.id.editText2);
-                            txt.setText("d");
+                            TextView txt = (TextView) findViewById(R.id.eltNumber);
+                            String msg = txt.getText().toString();
+                            mDatabase.child("Identification").setValue(msg);
+                            txt.setText(" "); //clears text
                         }
                     });
 
                 } else {
-                    setContentView(R.layout.outofrange);
+                    setContentView(R.layout.activity_main);
                 }
 
             }

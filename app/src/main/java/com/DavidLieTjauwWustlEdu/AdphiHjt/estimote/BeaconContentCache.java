@@ -5,7 +5,6 @@ import java.util.Map;
 
 public class BeaconContentCache implements BeaconContentFactory {
 
-
     private BeaconContentFactory beaconContentFactory;
 
     private Map<BeaconID, Object> cachedContent = new HashMap<>();

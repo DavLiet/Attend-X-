@@ -10,6 +10,7 @@ public class ProximityContentManager {
 
     private Listener listener;
 
+
     public ProximityContentManager(Context context,
                                    List<BeaconID> beaconIDs,
                                    BeaconContentFactory beaconContentFactory) {

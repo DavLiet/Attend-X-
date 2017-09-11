@@ -7,6 +7,7 @@ import java.util.UUID;
 
 public class BeaconID {
 
+
     private UUID proximityUUID;
     private int major;
     private int minor;

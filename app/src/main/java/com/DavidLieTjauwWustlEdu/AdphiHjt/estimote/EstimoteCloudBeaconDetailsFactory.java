@@ -12,6 +12,7 @@ public class EstimoteCloudBeaconDetailsFactory implements BeaconContentFactory {
 
     private static final String TAG = "BeaconDetailsFactory";
 
+
     @Override
     public void getContent(final BeaconID beaconID, final Callback callback) {
         EstimoteCloud.getInstance().fetchBeaconDetails(

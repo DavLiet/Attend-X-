@@ -17,6 +17,7 @@ public class NearestBeaconManager {
 
     private static final BeaconRegion ALL_ESTIMOTE_BEACONS = new BeaconRegion("all Estimote beacons", null, null, null);
 
+
     private List<BeaconID> beaconIDs;
 
     private Listener listener;

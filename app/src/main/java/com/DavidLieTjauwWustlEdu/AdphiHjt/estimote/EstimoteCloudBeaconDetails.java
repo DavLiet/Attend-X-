@@ -4,6 +4,7 @@ import com.estimote.coresdk.cloud.model.Color;
 
 public class EstimoteCloudBeaconDetails {
 
+
     private String beaconName;
     private Color beaconColor;
 

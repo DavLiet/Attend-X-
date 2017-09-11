@@ -1,6 +1,9 @@
 package com.DavidLieTjauwWustlEdu.AdphiHjt;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -15,12 +18,18 @@ import com.DavidLieTjauwWustlEdu.AdphiHjt.estimote.ProximityContentManager;
 import com.estimote.coresdk.common.requirements.SystemRequirementsChecker;
 import com.estimote.coresdk.cloud.model.Color;
 import com.estimote.coresdk.recognition.packets.Beacon;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,23 +39,59 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
+    SharedPreferences sharedpreferences;
+
+
     private static final String TAG = "MainActivity";
 
-    private static final Map<Color, Integer> BACKGROUND_COLORS = new HashMap<>();
+    //private static final Map<Color, Integer> BACKGROUND_COLORS = new HashMap<>();
 
     private DatabaseReference mDatabase;
+    private DatabaseReference loginState;
+
+
 
 
     private static final int BACKGROUND_COLOR_NEUTRAL = android.graphics.Color.rgb(160, 169, 172);
 
     private ProximityContentManager proximityContentManager;
 
+     int state;
+    final int usersState = 1;
+
+    //final String[] track = new String[2];
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        sharedpreferences = getSharedPreferences("statePref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.putInt("state", usersState);
+
 
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Identification");
+        loginState = FirebaseDatabase.getInstance().getReference().child("State");
+
+
+        loginState.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                String firebaseState = dataSnapshot.getValue().toString();
+                state = Integer.parseInt(firebaseState);
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e(TAG, "There was an error when trying to retrieve data from firebase");
+            }
+        });
 
 
 
@@ -63,16 +108,35 @@ public class MainActivity extends AppCompatActivity {
                 Integer backgroundColor;
                 if (content != null) {
 
-                    setContentView(R.layout.signin);
 
-                     Button submit = (Button) findViewById(R.id.submit);
+                    setContentView(R.layout.signin);
+                    final int userState = sharedpreferences.getInt("state",6);
+
+
+                    Button submit = (Button) findViewById(R.id.submit);
                     submit.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            TextView txt = (TextView) findViewById(R.id.eltNumber);
-                            String msg = txt.getText().toString();
-                            mDatabase.child("Identification").setValue(msg);
-                            txt.setText(" "); //clears text
+                            //int currentState = prefs.getInt("stateVal",0); //gets value
+
+                            if(state == userState) { //if both are 1
+                                String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+                                String[] tokens = date.split("-");
+
+                            ////////////////////
+                                TextView txt = (TextView) findViewById(R.id.eltNumber);
+                                String msg = txt.getText().toString();
+                            /////////////////////////
+
+                                mDatabase.child(tokens[2]).setValue("3");
+                                txt.setText(" "); //clears text
+                               // editor.putInt("stateVal", 0); //changes stateVal to 0
+                                setContentView(R.layout.outofrange);
+                            }
+                           else{
+                                setContentView(R.layout.activity_main);
+                           }
+
                         }
                     });
 
